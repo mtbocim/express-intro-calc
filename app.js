@@ -7,7 +7,8 @@ const stats = require("./stats")
 
 const utils = require("./utils")
 
-const fs = require("fs")
+// const fs = require("fs")
+
 // useful error class to throw
 const { NotFoundError } = require("./expressError");
 
@@ -15,13 +16,13 @@ const MISSING = "Expected key `nums` with comma-separated list of numbers.";
 
 
 /** Finds mean of nums in qs: returns {operation: "mean", result } */
-app.get("/mean", function(req, res){
+app.get("/mean", function (req, res) {
 
   let strNums = req.query.nums;
   let nums = utils.convertStrNums(strNums);
 
   const result = stats.findMean(nums);
-  return res.json({operation: "mean", result})
+  return res.json({ operation: "mean", result })
 
 });
 
@@ -46,9 +47,21 @@ app.get("/mode", function (req, res) {
 
 });
 
+/** Finds mean, median, and mode for the qs:
+ * 
+ * returns:
+ * {
+ *    operation: "all",
+ *    mean: meanResult,
+ *    median: medianResult,
+ *    mode: modeResult 
+ * } 
+ */
 app.get("/all", function (req, res) {
+
   let strNums = req.query.nums;
   let nums = utils.convertStrNums(strNums);
+
   const medianResult = stats.findMedian(nums);
   const meanResult = stats.findMean(nums);
   const modeResult = stats.findMode(nums);
@@ -61,10 +74,10 @@ app.get("/all", function (req, res) {
   });
 
 
-  if (req.query.save === true) {
-    //writeFileSync?
-    fs.writeFile("./results.json", result, "utf8")
-  }
+  // if (req.query.save === true) {
+  //   //writeFileSync?
+  //   fs.writeFile("./results.json", result, "utf8")
+  // }
   return result
 
 });
