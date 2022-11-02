@@ -1,3 +1,5 @@
+"use strict";
+
 /** Simple demo Express app. */
 
 const express = require("express");
@@ -17,7 +19,7 @@ const MISSING = "Expected key `nums` with comma-separated list of numbers.";
 
 /** Finds mean of nums in qs: returns {operation: "mean", result } */
 app.get("/mean", function (req, res) {
-
+  // check query has data at all
   let strNums = req.query.nums;
   let nums = utils.convertStrNums(strNums);
 
@@ -74,7 +76,7 @@ app.get("/all", function (req, res) {
   });
 
 
-  // if (req.query.save === true) {
+  // if (Bool(req.query.save) === true) {
   //   //writeFileSync?
   //   fs.writeFile("./results.json", result, "utf8")
   // }
