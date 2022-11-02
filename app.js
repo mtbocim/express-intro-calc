@@ -7,7 +7,7 @@ const stats = require("./stats")
 
 const utils = require("./utils")
 
-const fsP = require("fs/promises")
+const fs = require("fs")
 // useful error class to throw
 const { NotFoundError } = require("./expressError");
 
@@ -37,7 +37,7 @@ app.get("/median", function (req, res) {
 
 /** Finds mode of nums in qs: returns {operation: "mode", result } */
 app.get("/mode", function (req, res) {
-  debugger;
+
   let strNums = req.query.nums;
   let nums = utils.convertStrNums(strNums);
 
@@ -46,7 +46,7 @@ app.get("/mode", function (req, res) {
 
 });
 
-app.get("/all", async function (req, res) {
+app.get("/all", function (req, res) {
   let strNums = req.query.nums;
   let nums = utils.convertStrNums(strNums);
   const medianResult = stats.findMedian(nums);
@@ -60,9 +60,10 @@ app.get("/all", async function (req, res) {
     mode: modeResult,
   });
 
-  
+
   if (req.query.save === true) {
-    await fsP.writeFile("./results.json", result, "utf8")
+    //writeFileSync?
+    fs.writeFile("./results.json", result, "utf8")
   }
   return result
 
