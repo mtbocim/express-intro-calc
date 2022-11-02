@@ -7,6 +7,7 @@ const stats = require("./stats")
 
 const utils = require("./utils")
 
+const fsP = require("fs/promises")
 // useful error class to throw
 const { NotFoundError } = require("./expressError");
 
@@ -15,20 +16,57 @@ const MISSING = "Expected key `nums` with comma-separated list of numbers.";
 
 /** Finds mean of nums in qs: returns {operation: "mean", result } */
 app.get("/mean", function(req, res){
-  debugger;
+
   let strNums = req.query.nums;
   let nums = utils.convertStrNums(strNums);
 
-
-  stats.findMean(nums);
+  const result = stats.findMean(nums);
+  return res.json({operation: "mean", result})
 
 });
 
 /** Finds median of nums in qs: returns {operation: "median", result } */
+app.get("/median", function (req, res) {
 
+  let strNums = req.query.nums;
+  let nums = utils.convertStrNums(strNums);
 
-/** Finds mode of nums in qs: returns {operation: "mean", result } */
+  const result = stats.findMedian(nums);
+  return res.json({ operation: "median", result });
+});
 
+/** Finds mode of nums in qs: returns {operation: "mode", result } */
+app.get("/mode", function (req, res) {
+  debugger;
+  let strNums = req.query.nums;
+  let nums = utils.convertStrNums(strNums);
+
+  const result = stats.findMode(nums);
+  return res.json({ operation: "mode", result });
+
+});
+
+app.get("/all", async function (req, res) {
+  let strNums = req.query.nums;
+  let nums = utils.convertStrNums(strNums);
+  const medianResult = stats.findMedian(nums);
+  const meanResult = stats.findMean(nums);
+  const modeResult = stats.findMode(nums);
+
+  const result = res.json({
+    operation: "all",
+    mean: meanResult,
+    median: medianResult,
+    mode: modeResult,
+  });
+
+  
+  if (req.query.save === true) {
+    await fsP.writeFile("./results.json", result, "utf8")
+  }
+  return result
+
+});
 
 /** 404 handler: matches unmatched routes; raises NotFoundError. */
 app.use(function (req, res) {
